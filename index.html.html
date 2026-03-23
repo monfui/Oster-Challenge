@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Oster-Lernspiel A2</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:rgba(0,0,0,0)}
+:root{--y:#F5C842;--g:#7BC67E;--b:#6BB5E8;--pu:#B08BE8;--or:#F0A050;--ok:#4CAF50;--er:#E53935;--bd:rgba(0,0,0,0.1);--tx:#2D2D2D;--mu:#7A7A7A}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;background:#F5F0E8;color:var(--tx);font-size:15px;padding:13px;-webkit-text-size-adjust:100%}
+.em{font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif}
+.wrap{max-width:540px;margin:0 auto}
+.sc{display:none}.sc.on{display:block}
+/* NAV LINK BUTTONS - these work in every browser, no JS needed to activate */
+.nb{display:inline-flex;align-items:center;justify-content:center;gap:5px;
+  border:1.5px solid rgba(0,0,0,0.13);border-radius:10px;padding:11px 18px;
+  font-size:14px;font-weight:700;background:white;color:var(--tx);
+  text-decoration:none;min-height:46px;font-family:inherit;cursor:pointer;
+  -webkit-appearance:none;appearance:none}
+.nb:active{background:rgba(0,0,0,0.06)}
+.nb.y{background:var(--y);border-color:#D4A020;color:#5A3000}
+.nb.y:active{background:#EDB820}
+.nbrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.nbrow .nb.y{flex:1}
+/* REGULAR BUTTONS for game interactions */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:5px;
+  border:1.5px solid rgba(0,0,0,0.13);border-radius:10px;padding:11px 18px;
+  font-size:14px;font-weight:700;background:white;color:var(--tx);
+  min-height:46px;font-family:inherit;cursor:pointer;width:100%;
+  -webkit-appearance:none;appearance:none;text-align:left}
+.btn:active{background:rgba(0,0,0,0.06)}
+.btn.y{background:var(--y);border-color:#D4A020;color:#5A3000}
+.btn.y:active{background:#EDB820}
+.btn.ok{background:#E8F8E8;border-color:var(--ok);color:#1B5E20}
+.btn.er{background:#FFEBEE;border-color:var(--er);color:#B71C1C}
+.btn.sh{background:#E8F8E8;border-color:var(--ok)}
+.brow{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+/* LAYOUT */
+.topbar{background:linear-gradient(135deg,#FFF8E8,#E8F4FF);border:1px solid var(--bd);border-radius:14px;padding:12px 16px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between}
+.ttl{font-size:17px;font-weight:800}.ttl b{color:#D4A020}
+.tsub{font-size:11px;color:var(--mu);font-weight:600;margin-top:2px}
+.tec{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--mu);font-weight:700}
+.tec strong{font-size:20px;color:#C08000}
+.card{background:white;border:1.5px solid var(--bd);border-radius:13px;padding:15px;margin-bottom:11px}
+.dv{height:1px;background:var(--bd);margin:10px 0}
+.lb{font-size:11px;font-weight:800;text-transform:uppercase;color:var(--mu);margin-bottom:7px;letter-spacing:.05em}
+.inf{border-radius:11px;padding:12px 14px;font-size:12px;font-weight:600;margin-bottom:12px}
+.iny{background:linear-gradient(135deg,#FFF8E8,#FFF0D0);border:1px solid #E8C840;color:#8A6A00}
+/* DAY GRID */
+.dg{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:14px}
+.dc{border-radius:13px;border:1.5px solid var(--bd);padding:13px 8px;text-align:center;background:white;text-decoration:none;color:var(--tx);display:block}
+.dc:active{opacity:.7}.dc.done{border-color:var(--ok);background:#F0FFF0}
+.dn{font-size:10px;font-weight:800;text-transform:uppercase;color:var(--mu);margin-bottom:3px}
+.di{font-size:24px;line-height:1.3}.dnm{font-size:11px;font-weight:700;margin-top:4px}
+.des{display:flex;justify-content:center;gap:2px;margin-top:5px}
+.de{font-size:13px;opacity:.2}.de.on{opacity:1}
+.dl{font-size:10px;color:#388E3C;font-weight:800;margin-top:3px}
+/* TOTALS */
+.tot{background:linear-gradient(135deg,#FFF3CC,#FFE8A0);border:1.5px solid #E8C840;border-radius:13px;padding:13px 16px;display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.tl{font-size:13px;color:#8A6A00;font-weight:700}.ts{font-size:11px;color:#A07820;margin-top:1px}.tn{font-size:20px;font-weight:800;color:#C08000}
+/* GAME */
+.gh{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px;gap:10px}
+.gbg{display:inline-block;background:var(--y);color:#5A3000;border-radius:20px;padding:3px 10px;font-size:11px;font-weight:800;text-transform:uppercase;margin-bottom:5px}
+.gt{font-size:16px;font-weight:800}.gs{font-size:12px;color:var(--mu);margin-top:2px}
+.tg{display:inline-block;background:#F0F0F0;border-radius:5px;padding:2px 7px;font-size:11px;font-weight:700;color:var(--mu);margin:3px 3px 0 0}
+.ep{display:flex;flex-direction:column;align-items:flex-end;gap:3px}
+.epl{font-size:10px;color:var(--mu);font-weight:800;text-transform:uppercase}
+.epr{display:flex;gap:2px}.epr span{font-size:17px;opacity:.2}.epr span.on{opacity:1}
+.qn{font-size:11px;font-weight:800;color:var(--mu);text-transform:uppercase;margin-bottom:5px}
+.qt{font-size:15px;font-weight:700;margin-bottom:11px;line-height:1.5}
+.qh{font-size:12px;color:var(--mu);margin-bottom:9px;font-style:italic}
+.fb{border-radius:9px;padding:10px 13px;font-size:13px;font-weight:700;margin-top:7px;display:none}
+.fb.on{display:block}.fb.ok{background:#E8F8E8;color:#1B5E20;border:1px solid #A5D6A7}
+.fb.er{background:#FFEBEE;color:#B71C1C;border:1px solid #FFCDD2}
+/* MATCH */
+.mg{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.mc{display:flex;flex-direction:column;gap:5px}
+.mb{border:1.5px solid var(--bd);border-radius:9px;padding:10px 8px;font-size:13px;font-weight:700;background:white;text-align:center;color:var(--tx);cursor:pointer;font-family:inherit;min-height:46px;width:100%;-webkit-appearance:none;appearance:none}
+.mb:active:not([disabled]){background:#FFF8E0}
+.mb.sel{background:var(--y);border-color:#D4A020;color:#5A3000}
+.mb.ok{background:#E8F8E8;border-color:var(--ok);color:#1B5E20}
+.mb.er{background:#FFEBEE;border-color:var(--er);color:#B71C1C}
+/* SCRAMBLE */
+.tl{display:inline-block;background:var(--pu);color:#2A0D6B;border-radius:8px;padding:7px 10px;margin:3px;font-weight:800;font-size:14px;cursor:pointer;border:1.5px solid rgba(0,0,0,0.1);min-height:38px;-webkit-user-select:none;user-select:none}
+.tl.used{opacity:.25}
+.aa{min-height:46px;border:1.5px dashed var(--bd);border-radius:10px;padding:7px 9px;display:flex;flex-wrap:wrap;align-items:center;margin:9px 0;background:#FAFAFA;gap:3px}
+.at{display:inline-block;background:var(--g);color:#1A4A1A;border-radius:7px;padding:6px 9px;font-weight:800;font-size:13px;cursor:pointer;border:1.5px solid rgba(0,0,0,0.1);min-height:34px}
+/* NS */
+.nsb{display:inline-block;min-width:60px;border-bottom:2.5px solid var(--or);background:#FFF8E8;border-radius:4px 4px 0 0;padding:1px 5px;color:#8A4000;text-align:center;vertical-align:middle}
+.cj{display:inline-flex;align-items:center;justify-content:center;border:1.5px solid var(--bd);border-radius:8px;padding:9px 14px;margin:3px;font-size:14px;font-weight:700;background:white;color:var(--tx);cursor:pointer;font-family:inherit;min-height:46px;min-width:66px;-webkit-appearance:none;appearance:none}
+.cj:active:not([disabled]){background:#FFF0D0}
+.cj.ok{background:#E8F8E8;border-color:var(--ok);color:#1B5E20}
+.cj.er{background:#FFEBEE;border-color:var(--er);color:#B71C1C}
+.cj.sh{background:#E8F8E8;border-color:var(--ok)}
+/* RESULT */
+.pod{display:flex;align-items:flex-end;justify-content:center;gap:7px;margin:14px 0}
+.pp{flex:1;text-align:center;border-radius:11px 11px 0 0;padding:11px 7px;border:1.5px solid rgba(0,0,0,0.08)}
+.pp.p1{background:linear-gradient(135deg,#FFF3A0,#F5C842);min-height:110px;border-color:#D4A020}
+.pp.p2{background:linear-gradient(135deg,#E8E8E8,#C8C8C8);min-height:85px}
+.pp.p3{background:linear-gradient(135deg,#F0DCC8,#D4A882);min-height:65px}
+.pr{font-size:19px;margin-bottom:3px}.ps{font-size:21px;font-weight:800;color:#3A3A3A}.pl{font-size:11px;color:var(--mu);font-weight:700}
+.ri{display:flex;align-items:center;gap:7px;margin-bottom:7px}
+.ti{border:1.5px solid var(--bd);border-radius:9px;padding:9px 11px;font-family:inherit;font-size:13px;font-weight:600;outline:none;background:white;-webkit-appearance:none;appearance:none}
+.ti:focus{border-color:var(--y)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="topbar">
+  <div><div class="ttl"><span class="em">🐣</span> <b>Oster</b>-Lernspiel</div><div class="tsub">6 Challenges · A1/A2 Deutsch</div></div>
+  <div class="tec"><strong id="teggs">0</strong><span class="em">🥚</span><span>/ 18</span></div>
+</div>
+
+<!-- ANLEITUNG -->
+<div class="sc on" id="sc-intro">
+  <div style="background:linear-gradient(135deg,#FFFAE8,#E8F4FF);border:1.5px solid #E8C840;border-radius:14px;padding:17px;margin-bottom:13px">
+    <div class="em" style="font-size:21px;text-align:center;margin-bottom:9px">🐇 🌸 🥚 🌼 🐣</div>
+    <h2 style="font-size:16px;font-weight:800;text-align:center;margin-bottom:5px">Spielanleitung</h2>
+    <p style="font-size:13px;color:var(--mu);text-align:center;margin-bottom:13px">Ostern naht – Zeit für 6 spannende Deutsch-Challenges!</p>
+    <div class="dv"></div>
+    <div class="lb" style="margin-top:10px">So geht's</div>
+    <div style="font-size:13px;line-height:1.9"><span class="em">🗓️</span> <b>6 Tage</b> – jeden Tag eine neue Challenge<br><span class="em">🥚</span> <b>0–3 Eier</b> pro Tag sammeln<br><span class="em">🏆</span> <b>3×3 = 18 Eier</b> maximal möglich<br><span class="em">⏱️</span> <b>ca. 10 Minuten</b> pro Spiel</div>
+    <div class="dv"></div>
+    <div class="lb">Eierpunkte</div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:5px;text-align:center;font-size:12px">
+      <div style="background:white;border-radius:7px;padding:7px 4px;border:1px solid var(--bd)"><span class="em">🥚🥚🥚</span><br><b style="font-size:10px">3 Eier</b><br><span style="color:var(--mu);font-size:10px">Perfekt!</span></div>
+      <div style="background:white;border-radius:7px;padding:7px 4px;border:1px solid var(--bd)"><span class="em">🥚🥚</span><br><b style="font-size:10px">2 Eier</b><br><span style="color:var(--mu);font-size:10px">Gut!</span></div>
+      <div style="background:white;border-radius:7px;padding:7px 4px;border:1px solid var(--bd)"><span class="em">🥚</span><br><b style="font-size:10px">1 Ei</b><br><span style="color:var(--mu);font-size:10px">Ok!</span></div>
+      <div style="background:white;border-radius:7px;padding:7px 4px;border:1px solid var(--bd)">–<br><b style="font-size:10px">0 Eier</b><br><span style="color:var(--mu);font-size:10px">Üben!</span></div>
+    </div>
+    <div class="dv"></div>
+    <div class="lb">Themen</div>
+    <div style="font-size:12px;line-height:2.1"><span class="em">🌼</span> <b>Tag 1:</b> Perfekt – haben oder sein?<br><span class="em">🗺️</span> <b>Tag 2:</b> Wegbeschreibung zum Ostermarkt<br><span class="em">🧺</span> <b>Tag 3:</b> Einkaufen – Mengen &amp; Lebensmittel<br><span class="em">🌿</span> <b>Tag 4:</b> Nebensätze mit „dass" und „weil"<br><span class="em">✂️</span> <b>Tag 5:</b> Trennbare Verben<br><span class="em">📧</span> <b>Tag 6:</b> Eine formelle Email schreiben</div>
+    <div class="dv"></div>
+    <div class="inf iny"><span class="em">💡</span> <b>Tipp:</b> Schreibe deine Punkte auf! Am Ende gibt es Platz 1, 2 und 3 in der Klasse.</div>
+  </div>
+  <div class="nbrow">
+    <a href="#overview" class="nb y" style="font-size:15px"><span class="em">🐣</span> Spiel starten!</a>
+  </div>
+</div>
+
+<!-- ÜBERSICHT -->
+<div class="sc" id="sc-overview">
+  <div class="lb">Deine 6 Challenges</div>
+  <div class="dg" id="day-grid"></div>
+  <div class="tot">
+    <div><div class="tl">Meine Eier <span class="em">🥚</span></div><div class="ts">Sammle bis zu 18 Eier!</div></div>
+    <div class="tn"><span id="ov-eggs">0</span> / 18</div>
+  </div>
+  <div class="nbrow">
+    <a href="#intro" class="nb" style="font-size:13px">← Anleitung</a>
+    <a href="#result" class="nb y"><span class="em">🏆</span> Auswertung</a>
+  </div>
+</div>
+
+<!-- SPIEL -->
+<div class="sc" id="sc-game">
+  <div id="gc"></div>
+</div>
+
+<!-- AUSWERTUNG -->
+<div class="sc" id="sc-result">
+  <div style="background:linear-gradient(135deg,#FFF8C0,#FFE880);border:2px solid #D4A020;border-radius:14px;padding:17px;text-align:center;margin-bottom:13px">
+    <div class="em" style="font-size:28px;margin-bottom:5px">🏆</div>
+    <h2 style="font-size:17px;font-weight:800">Auswertung</h2>
+    <p style="font-size:13px;color:#8A6A00;margin-top:3px">Tragt eure Punkte ein und findet die Gewinner!</p>
+  </div>
+  <div class="card">
+    <div class="lb">Schülerinnen &amp; Schüler</div>
+    <div id="plist"></div>
+    <div class="nbrow" style="margin-top:9px">
+      <a href="#addplayer" class="nb">+ Schüler/in</a>
+      <a href="#calc" class="nb y"><span class="em">🥚</span> Auswerten</a>
+    </div>
+  </div>
+  <div class="card" style="background:linear-gradient(135deg,#F0FFF4,white)">
+    <div class="lb">Mein Ergebnis</div>
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div><div style="font-size:22px;font-weight:800;color:#1B5E20" id="my-score">0 <span class="em">🥚</span></div><div style="font-size:12px;color:var(--mu)">von 18 möglichen Eiern</div></div>
+      <div style="text-align:right"><div id="my-grade" style="font-size:13px;font-weight:700"></div><div style="font-size:11px;color:var(--mu)">Bewertung</div></div>
+    </div>
+    <div id="dbreak" style="margin-top:9px;display:flex;gap:5px;flex-wrap:wrap"></div>
+  </div>
+  <div id="podarea" style="display:none">
+    <div class="lb" style="margin-top:3px">Klassenrangliste</div>
+    <div class="pod" id="podium"></div>
+    <div id="ranking" style="font-size:13px"></div>
+  </div>
+  <div class="nbrow">
+    <a href="#overview" class="nb">← Zurück</a>
+    <a href="#reset" class="nb y"><span class="em">🔄</span> Neu starten</a>
+  </div>
+</div>
+
+</div>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────
+var G=[
+  {ico:'📖',name:'Ostergeschichte',badge:'Tag 1',sub:'Grammatik: Perfekt (haben/sein)',tags:['Perfekt','Wortschatz'],
+   intro:'Der Osterhase hat viel zu tun! Wähle das richtige Hilfsverb im Perfekt.',type:'mc',
+   q:[
+    {q:'Der Osterhase ______ früh aufgestanden.',o:['hat','ist','war','sein'],c:1,e:'"aufstehen" = Bewegungsverb → Hilfsverb "ist"'},
+    {q:'Er ______ viele bunte Eier gefunden.',o:['ist','war','hat','hatte'],c:2,e:'"finden" → Hilfsverb "hat"'},
+    {q:'Die Kinder ______ in den Garten gelaufen.',o:['haben','ist','sind','war'],c:2,e:'"laufen" = Bewegungsverb → Hilfsverb "sind"'},
+    {q:'Mama ______ einen leckeren Osterkuchen gebacken.',o:['ist','hat','sind','haben'],c:1,e:'"backen" → Hilfsverb "hat"'},
+    {q:'Papa ______ die Ostereier im Garten versteckt.',o:['ist','sind','hat','haben'],c:2,e:'"verstecken" → Hilfsverb "hat"'}
+  ]},
+  {ico:'🗺️',name:'Zum Ostermarkt!',badge:'Tag 2',sub:'Kommunikation: Wegbeschreibung',tags:['Wegbeschreibung','Präpositionen'],
+   intro:'Hilf den Touristen! Wähle das richtige Wort.',type:'fill',
+   s:[
+    {pre:'Gehen Sie an der Ampel ',b:'links',post:', dann sehen Sie den Markt.',h:'Richtung an der Ampel (↙)',p:['links','rechts','geradeaus','zurück']},
+    {pre:'Die Bäckerei ist ',b:'gegenüber',post:' der Post.',h:'Auf der anderen Seite der Straße',p:['gegenüber','neben','hinter','zwischen']},
+    {pre:'Fahren Sie ',b:'geradeaus',post:', bis Sie die Kirche sehen.',h:'Immer in dieselbe Richtung (→)',p:['geradeaus','links','rechts','zurück']}
+  ]},
+  {ico:'🧺',name:'Oster-Einkauf',badge:'Tag 3',sub:'Wortschatz: Lebensmittel & Mengen',tags:['Wortschatz','Mengen'],
+   intro:'Verbinde die Menge mit dem richtigen Lebensmittel!',type:'match',
+   p:[['eine Tüte','Mehl'],['ein Dutzend','Eier'],['eine Flasche','Milch'],['ein Bund','Möhren'],['eine Scheibe','Schinken'],['500 Gramm','Butter']]
+  },
+  {ico:'🌿',name:'Weil & Dass',badge:'Tag 4',sub:'Grammatik: Nebensätze mit weil/dass',tags:['Nebensätze','Wortstellung'],
+   intro:'Wähle die richtige Konjunktion oder Satzhälfte!',type:'ns',
+   q:[
+    {t:'cj',m:'Ich freue mich,',b:'___',r:'der Osterhase heute kommt.',o:['dass','weil','aber','und'],c:0,e:'"dass" = Objektsatz, Verb ans Ende.'},
+    {t:'cj',m:'Die Kinder suchen die Eier,',b:'___',r:'sie Schokolade bekommen wollen.',o:['dass','ob','weil','denn'],c:2,e:'"weil" = Grund angeben, Verb ans Ende.'},
+    {t:'en',m:'Mama sagt, dass sie einen Kuchen',o:['backt sie.','sie backt.','backen sie.','backt.'],c:3,e:'dass-Satz: Verb ganz ans Ende → "...Kuchen backt."'},
+    {t:'en',m:'Papa versteckt die Eier, weil die Kinder',o:['suchen sie gern.','sie gern suchen.','gern suchen sie.','suchen gern.'],c:1,e:'weil-Satz: Verb ganz ans Ende → "...Kinder sie gern suchen."'},
+    {t:'cj',m:'Ich weiss,',b:'___',r:'Ostern im Frühling ist.',o:['weil','dass','denn','aber'],c:1,e:'"dass" für Wissens-/Meinungssätze, Verb ans Ende.'},
+    {t:'en',m:'Wir backen Plätzchen, weil das',o:['macht Spaß.','Spaß macht.','es Spaß macht.','macht es Spaß.'],c:1,e:'weil-Satz: Verb ans Ende → "...weil das Spaß macht."'}
+  ]},
+  {ico:'✂️',name:'Ostervorbereitung',badge:'Tag 5',sub:'Grammatik: Trennbare Verben',tags:['Trennbare Verben','Satzbau'],
+   intro:'Trennbare Verben – bringe die Wörter in die richtige Reihenfolge!',type:'scr',
+   s:[
+    {w:['Ich','kaufe','die','Ostereier','morgen','ein','.'],a:'Ich kaufe die Ostereier morgen ein .',v:'einkaufen',h:'ein|kaufen – "ein" kommt ans Ende!'},
+    {w:['Wir','bereiten','das','Osterfrühstück','vor','.'],a:'Wir bereiten das Osterfrühstück vor .',v:'vorbereiten',h:'vor|bereiten – "vor" kommt ans Ende!'},
+    {w:['Die','Kinder','räumen','nach','dem','Spiel','auf','.'],a:'Die Kinder räumen nach dem Spiel auf .',v:'aufräumen',h:'auf|räumen – "auf" kommt ans Ende!'}
+  ]},
+  {ico:'📧',name:'Ostereinladung',badge:'Tag 6',sub:'Schreiben: formelle Email',tags:['Email','Textproduktion'],
+   intro:'Schreibe eine Email an deinen Lehrer! Wähle die richtigen Formulierungen.',type:'em',
+   p:[
+    {l:'Anrede',pr:'Du schreibst an deinen Lehrer Herrn Müller. Wie beginnst du die Email?',o:['Hey Müller!','Sehr geehrter Herr Müller,','Hi,','Liebe Müller,'],c:1,e:'Formell: "Sehr geehrter/e ..." für offizielle Emails'},
+    {l:'Hauptteil',pr:'Du lädst ihn zu einer Osterfeier ein. Welcher Satz ist korrekt und höflich?',o:['Komm bitte!','Ich würde Sie herzlich zu unserer Osterfeier am 18. April einladen.','Wir feiern. Du kannst kommen.','Ich will, dass du kommst.'],c:1,e:'Konjunktiv II "würde" + vollständige Info = höfliche Einladung'},
+    {l:'Abschluss',pr:'Wie beendest du eine formelle Email?',o:['Tschüss!','Bis bald, dein Schüler','Mit freundlichen Grüßen,','Viele Küsse!'],c:2,e:'"Mit freundlichen Grüßen" ist der Standard-Abschluss'}
+  ]}
+];
+
+// ── STATE ─────────────────────────────────────────────────
+var SC=[null,null,null,null,null,null];
+var CUR=null;
+var MA={},FA={},NA={},EA={};
+var MSEL=null,MCT=0,MRIGHT=[];
+var SCST=[];
+var PCT=0;
+
+// ── SCREEN ROUTING via hash ────────────────────────────────
+function route(hash){
+  var id=hash.replace('#','');
+  // Special actions
+  if(id==='addplayer'){addPlayer();return;}
+  if(id==='calc'){calcResults();return;}
+  if(id==='reset'){if(confirm('Wirklich alles zurücksetzen?')){doReset();}return;}
+  // Check if it's a game index
+  var gi=parseInt(id);
+  if(!isNaN(gi)&&gi>=0&&gi<G.length){startGame(gi);return;}
+  // Screen navigation
+  var screens=['intro','overview','game','result'];
+  var found=false;
+  for(var i=0;i<screens.length;i++){
+    var el=document.getElementById('sc-'+screens[i]);
+    if(el){
+      if(screens[i]===id){el.className='sc on';found=true;}
+      else el.className='sc';
+    }
+  }
+  if(!found){
+    // default to intro
+    var el=document.getElementById('sc-intro');
+    if(el) el.className='sc on';
+  }
+  if(window.scrollTo) window.scrollTo(0,0);
+  if(id==='overview') renderOV();
+  if(id==='result') renderResult();
+}
+
+window.addEventListener('hashchange',function(){route(window.location.hash);});
+window.addEventListener('load',function(){
+  var h=window.location.hash;
+  route(h&&h.length>1?h:'#intro');
+});
+
+// ── EGGS ──────────────────────────────────────────────────
+function tot(){return SC.reduce(function(a,v){return a+(v!==null?v:0);},0);}
+function updE(){
+  var t=tot();
+  var a=document.getElementById('teggs');if(a)a.textContent=t;
+  var b=document.getElementById('ov-eggs');if(b)b.textContent=t;
+}
+
+// ── OVERVIEW ──────────────────────────────────────────────
+function renderOV(){
+  updE();
+  var g=document.getElementById('day-grid');if(!g)return;
+  var h='';
+  for(var i=0;i<G.length;i++){
+    var gm=G[i],s=SC[i],done=s!==null;
+    var eggs='';
+    for(var j=0;j<3;j++) eggs+='<span class="de em'+(s!==null&&j<s?' on':'')+'">🥚</span>';
+    h+='<a href="#'+i+'" class="dc'+(done?' done':'')+'">'
+      +'<div class="dn">'+gm.badge+'</div>'
+      +'<div class="di em">'+gm.ico+'</div>'
+      +'<div class="dnm">'+gm.name+'</div>'
+      +'<div class="des">'+eggs+'</div>'
+      +(done?'<div class="dl">✓ Fertig</div>':'')
+      +'</a>';
+  }
+  g.innerHTML=h;
+}
+
+// ── START GAME ────────────────────────────────────────────
+function startGame(idx){
+  CUR=idx; MA={};FA={};NA={};EA={};
+  MSEL=null;MCT=0;SCST=[];
+  var gm=G[idx];
+  var tags='';for(var i=0;i<gm.tags.length;i++) tags+='<span class="tg">'+gm.tags[i]+'</span>';
+  var h='<div class="gh"><div>'
+    +'<div class="gbg">'+gm.badge+'</div>'
+    +'<div class="gt"><span class="em">'+gm.ico+'</span> '+gm.name+'</div>'
+    +'<div class="gs">'+gm.sub+'</div>'
+    +'<div style="margin-top:4px">'+tags+'</div></div>'
+    +'<div class="ep"><div class="epl">Punkte</div>'
+    +'<div class="epr" id="le"><span class="em">🥚</span><span class="em">🥚</span><span class="em">🥚</span></div>'
+    +'</div></div>'
+    +'<div class="inf iny">'+gm.intro+'</div>';
+  if(gm.type==='mc')  h+=bMC(gm);
+  else if(gm.type==='fill') h+=bFill(gm);
+  else if(gm.type==='match')h+=bMatch(gm);
+  else if(gm.type==='ns')   h+=bNS(gm);
+  else if(gm.type==='scr')  h+=bScr(gm);
+  else if(gm.type==='em')   h+=bEm(gm);
+  h+='<div class="brow">'
+    +'<a href="#overview" class="nb" style="text-align:center">← Übersicht</a>'
+    +'<a href="#submit" class="nb y" id="submitbtn" style="flex:1;text-align:center"><span class="em">🥚</span> Auswerten</a>'
+    +'</div>';
+  var gc=document.getElementById('gc');if(gc)gc.innerHTML=h;
+  // show game screen
+  document.querySelectorAll('.sc').forEach(function(s){s.className='sc';});
+  var sg=document.getElementById('sc-game');if(sg)sg.className='sc on';
+  if(window.scrollTo)window.scrollTo(0,0);
+  if(window.history&&window.history.pushState) window.history.pushState(null,null,'#game');
+  // attach submit via hash
+  window._submitPending=false;
+  var sb=document.getElementById('submitbtn');
+  if(sb) sb.addEventListener('click',function(e){e.preventDefault();doSubmit();});
+}
+
+// ── MC ────────────────────────────────────────────────────
+function bMC(gm){
+  var h='';
+  for(var qi=0;qi<gm.q.length;qi++){
+    var q=gm.q[qi];
+    h+='<div class="card"><div class="qn">Frage '+(qi+1)+' von '+gm.q.length+'</div>'
+      +'<div class="qt">'+q.q+'</div>';
+    for(var oi=0;oi<q.o.length;oi++)
+      h+='<button type="button" class="btn" id="mc'+qi+'_'+oi+'" onclick="pMC('+qi+','+oi+')">'+q.o[oi]+'</button>';
+    h+='<div class="fb" id="fb'+qi+'"></div></div>';
+  }
+  return h;
+}
+function pMC(qi,oi){
+  var q=G[CUR].q[qi];MA[qi]=oi;
+  for(var i=0;i<q.o.length;i++){
+    var b=document.getElementById('mc'+qi+'_'+i);if(!b)continue;
+    b.disabled=true;b.className='btn';
+    if(i===oi&&oi===q.c)b.className='btn ok';
+    else if(i===oi)b.className='btn er';
+    else if(i===q.c)b.className='btn sh';
+  }
+  var f=document.getElementById('fb'+qi);if(!f)return;
+  f.className='fb on '+(oi===q.c?'ok':'er');
+  f.textContent=(oi===q.c?'✅ Richtig! ':'❌ Leider falsch. ')+q.e;
+  uLE();
+}
+function sMC(){var gm=G[CUR],c=0;for(var i=0;i<gm.q.length;i++){if(MA[i]===gm.q[i].c)c++;}var t=gm.q.length;return c===t?3:c>=Math.ceil(t*.6)?2:c>=1?1:0;}
+
+// ── FILL ──────────────────────────────────────────────────
+function bFill(gm){
+  var h='<div class="card"><div class="lb">Wähle das richtige Wort</div>';
+  for(var si=0;si<gm.s.length;si++){
+    var s=gm.s[si];
+    h+='<div style="margin-bottom:13px;padding-bottom:11px;border-bottom:1px solid var(--bd)">'
+      +'<div class="qh">💡 '+s.h+'</div>'
+      +'<div style="font-size:14px;font-weight:600;margin-bottom:8px">'+s.pre+'<span id="fbl'+si+'" style="font-weight:800;color:#1B5E20"></span>'+s.post+'</div>'
+      +'<div style="display:flex;flex-wrap:wrap;gap:5px">';
+    for(var pi=0;pi<s.p.length;pi++)
+      h+='<button type="button" class="btn" id="fp'+si+'_'+pi+'" style="width:auto;padding:9px 13px;min-height:40px" onclick="pFill('+si+','+pi+')">'+s.p[pi]+'</button>';
+    h+='</div><div class="fb" id="ffb'+si+'"></div></div>';
+  }
+  return h+'</div>';
+}
+function pFill(si,pi){
+  var s=G[CUR].s[si],w=s.p[pi];FA[si]=w;var ok=w===s.b;
+  for(var i=0;i<s.p.length;i++){
+    var b=document.getElementById('fp'+si+'_'+i);if(!b)continue;
+    b.disabled=true;b.className='btn';b.style.width='auto';b.style.padding='9px 13px';b.style.minHeight='40px';
+    if(i===pi&&ok)b.className='btn ok';
+    else if(i===pi)b.className='btn er';
+    else if(s.p[i]===s.b)b.className='btn sh';
+  }
+  var bl=document.getElementById('fbl'+si);if(bl)bl.textContent=w;
+  var f=document.getElementById('ffb'+si);if(!f)return;
+  f.className='fb on '+(ok?'ok':'er');
+  f.textContent=ok?'✅ Richtig! "'+w+'" passt perfekt.':'❌ Nicht ganz. Richtig: "'+s.b+'"';
+  uLE();
+}
+function sFill(){var gm=G[CUR],c=0;for(var i=0;i<gm.s.length;i++){if(FA[i]===gm.s[i].b)c++;}return c===gm.s.length?3:c>=2?2:c>=1?1:0;}
+
+// ── MATCH ─────────────────────────────────────────────────
+function bMatch(gm){
+  var left=[],right=[];
+  for(var i=0;i<gm.p.length;i++){left.push(gm.p[i][0]);right.push(gm.p[i][1]);}
+  for(var i=right.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=right[i];right[i]=right[j];right[j]=t;}
+  MRIGHT=right;
+  var h='<div class="card"><div class="lb">Verbinde die passenden Paare</div><div class="mg"><div class="mc">';
+  for(var i=0;i<left.length;i++) h+='<button type="button" class="mb" id="ml'+i+'" onclick="pMatch(0,'+i+')">'+left[i]+'</button>';
+  h+='</div><div class="mc">';
+  for(var i=0;i<right.length;i++) h+='<button type="button" class="mb" id="mr'+i+'" onclick="pMatch(1,'+i+')">'+right[i]+'</button>';
+  h+='</div></div><div class="fb" id="mfb"></div>'
+    +'<div style="font-size:12px;color:var(--mu);margin-top:7px">Paare: <span id="mct">0</span>/'+gm.p.length+'</div></div>';
+  return h;
+}
+function pMatch(side,idx){
+  var gm=G[CUR];
+  if(side===0){
+    if(MSEL!==null){var ob=document.getElementById('ml'+MSEL);if(ob)ob.className='mb';}
+    MSEL=idx;var b=document.getElementById('ml'+idx);if(b)b.className='mb sel';
+  } else {
+    if(MSEL===null)return;
+    var val=MRIGHT[idx],ok=val===gm.p[MSEL][1];
+    var lb=document.getElementById('ml'+MSEL),rb=document.getElementById('mr'+idx);
+    if(lb)lb.className='mb';
+    if(ok){
+      if(lb){lb.className='mb ok';lb.disabled=true;}
+      if(rb){rb.className='mb ok';rb.disabled=true;}
+      MCT++;var ct=document.getElementById('mct');if(ct)ct.textContent=MCT;
+    } else {
+      if(lb)lb.className='mb er';if(rb)rb.className='mb er';
+      (function(a,b){setTimeout(function(){if(a&&!a.disabled)a.className='mb';if(b&&!b.disabled)b.className='mb';},700);})(lb,rb);
+    }
+    var f=document.getElementById('mfb');if(!f)return;
+    f.className='fb on '+(ok?'ok':'er');
+    f.textContent=ok?'✅ Richtig! "'+gm.p[MSEL][0]+'" → "'+val+'"':'❌ Nicht ganz. Versuch es nochmal!';
+    MSEL=null;uLE();
+  }
+}
+function sMatch(){var gm=G[CUR];return MCT>=gm.p.length?3:MCT>=Math.ceil(gm.p.length*.66)?2:MCT>=Math.ceil(gm.p.length*.33)?1:0;}
+
+// ── NEBENSATZ ─────────────────────────────────────────────
+function bNS(gm){
+  var h='<div class="card" style="background:linear-gradient(135deg,#FFF8E8,#FFF0F8)">'
+    +'<div class="lb">📌 Grammatik-Tipp</div>'
+    +'<div style="font-size:13px;line-height:1.9"><b>dass</b> und <b>weil</b> leiten einen Nebensatz ein.<br>'
+    +'⚠️ Im Nebensatz steht das Verb <b>ganz am Ende!</b><br>'
+    +'<span style="color:#888">Bsp: Ich freue mich, weil der Frühling <b>kommt</b>.</span></div></div>';
+  for(var qi=0;qi<gm.q.length;qi++){
+    var q=gm.q[qi];
+    h+='<div class="card"><div class="qn">Aufgabe '+(qi+1)+'/'+gm.q.length+'</div>';
+    if(q.t==='cj'){
+      h+='<div class="qt">'+q.m+' <span class="nsb" id="nsb'+qi+'">___</span> '+q.r+'</div>'
+        +'<div style="font-size:12px;color:var(--mu);margin-bottom:7px">Welche Konjunktion passt?</div><div>';
+      for(var oi=0;oi<q.o.length;oi++) h+='<button type="button" class="cj" id="ns'+qi+'_'+oi+'" onclick="pNS('+qi+','+oi+')">'+q.o[oi]+'</button>';
+      h+='</div>';
+    } else {
+      h+='<div class="qt">'+q.m+' ______</div>'
+        +'<div style="font-size:12px;color:var(--mu);margin-bottom:7px">Welche Satzhälfte ist richtig? (Verb ans Ende!)</div>';
+      for(var oi=0;oi<q.o.length;oi++) h+='<button type="button" class="btn" id="ns'+qi+'_'+oi+'" onclick="pNS('+qi+','+oi+')">'+q.o[oi]+'</button>';
+    }
+    h+='<div class="fb" id="nfb'+qi+'"></div></div>';
+  }
+  return h;
+}
+function pNS(qi,oi){
+  var q=G[CUR].q[qi];NA[qi]=oi;var ok=oi===q.c,cj=q.t==='cj';
+  for(var i=0;i<q.o.length;i++){
+    var b=document.getElementById('ns'+qi+'_'+i);if(!b)continue;
+    b.disabled=true;b.className=cj?'cj':'btn';
+    if(i===oi&&ok)b.className=(cj?'cj':'btn')+' ok';
+    else if(i===oi)b.className=(cj?'cj':'btn')+' er';
+    else if(i===q.c)b.className=(cj?'cj':'btn')+' sh';
+  }
+  if(cj){var bl=document.getElementById('nsb'+qi);if(bl){bl.textContent=q.o[oi];bl.style.color=ok?'#1B5E20':'#B71C1C';}}
+  var f=document.getElementById('nfb'+qi);if(!f)return;
+  f.className='fb on '+(ok?'ok':'er');
+  f.textContent=(ok?'✅ Richtig! ':'❌ Leider falsch. ')+q.e;
+  uLE();
+}
+function sNS(){var gm=G[CUR],c=0;for(var i=0;i<gm.q.length;i++){if(NA[i]===gm.q[i].c)c++;}var t=gm.q.length;return c===t?3:c>=Math.ceil(t*.6)?2:c>=1?1:0;}
+
+// ── SCRAMBLE ──────────────────────────────────────────────
+function bScr(gm){
+  SCST=[];
+  for(var si=0;si<gm.s.length;si++){
+    var ws=gm.s[si].w.slice();
+    for(var i=ws.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=ws[i];ws[i]=ws[j];ws[j]=t;}
+    SCST.push({sh:ws,ans:[],ok:false});
+  }
+  var h='';
+  for(var si=0;si<gm.s.length;si++){
+    var s=gm.s[si];
+    h+='<div class="card"><div class="qn">Satz '+(si+1)+': <span class="tg">'+s.v+'</span></div>'
+      +'<div class="qh">💡 '+s.h+'</div>'
+      +'<div class="aa" id="aa'+si+'"><span style="color:var(--mu);font-size:12px">Klicke auf die Wörter unten...</span></div>'
+      +'<div id="ts'+si+'" style="margin:7px 0">';
+    for(var wi=0;wi<SCST[si].sh.length;wi++)
+      h+='<span class="tl em" id="tl'+si+'_'+wi+'" onclick="tapT('+si+','+wi+')">'+SCST[si].sh[wi]+'</span>';
+    h+='</div>'
+      +'<div style="display:flex;gap:6px">'
+      +'<button type="button" class="btn" style="width:auto;padding:8px 11px;min-height:40px;flex:0" onclick="rScr('+si+')"><span class="em">🔄</span> Reset</button>'
+      +'<button type="button" class="btn y" style="width:auto;padding:8px 11px;min-height:40px;flex:0" onclick="cScr('+si+')">✓ Prüfen</button>'
+      +'</div><div class="fb" id="sfb'+si+'"></div></div>';
+  }
+  return h;
+}
+function tapT(si,wi){
+  var t=document.getElementById('tl'+si+'_'+wi);if(!t)return;
+  var ans=SCST[si].ans,idx=-1;
+  for(var i=0;i<ans.length;i++){if(ans[i].wi===wi){idx=i;break;}}
+  if(idx>=0){SCST[si].ans.splice(idx,1);t.className='tl em';}
+  else{SCST[si].ans.push({wi:wi,w:SCST[si].sh[wi]});t.className='tl em used';}
+  dAns(si);
+}
+function dAns(si){
+  var area=document.getElementById('aa'+si);if(!area)return;
+  var ans=SCST[si].ans;
+  if(!ans.length){area.innerHTML='<span style="color:var(--mu);font-size:12px">Klicke auf die Wörter unten...</span>';return;}
+  var h='';
+  for(var i=0;i<ans.length;i++) h+='<span class="at" onclick="rmT('+si+','+ans[i].wi+')">'+ans[i].w+'</span>';
+  area.innerHTML=h;
+}
+function rmT(si,wi){
+  var ans=SCST[si].ans;
+  for(var i=0;i<ans.length;i++){if(ans[i].wi===wi){ans.splice(i,1);break;}}
+  var t=document.getElementById('tl'+si+'_'+wi);if(t)t.className='tl em';
+  dAns(si);
+}
+function rScr(si){
+  SCST[si].ans=[];
+  for(var wi=0;wi<SCST[si].sh.length;wi++){var t=document.getElementById('tl'+si+'_'+wi);if(t)t.className='tl em';}
+  dAns(si);
+}
+function cScr(si){
+  var s=G[CUR].s[si];
+  var att=SCST[si].ans.map(function(a){return a.w;}).join(' ');
+  var ok=att.trim()===s.a.trim();SCST[si].ok=ok;
+  var f=document.getElementById('sfb'+si);if(!f)return;
+  f.className='fb on '+(ok?'ok':'er');
+  f.textContent=ok?'✅ Perfekt! Der Satz ist richtig.':'❌ Noch nicht ganz. Richtig: "'+s.a+'"';
+  uLE();
+}
+function sScr(){var c=0;for(var i=0;i<SCST.length;i++){if(SCST[i].ok)c++;}return c>=3?3:c>=2?2:c>=1?1:0;}
+
+// ── EMAIL ─────────────────────────────────────────────────
+function bEm(gm){
+  var h='<div class="card"><div class="lb">Wähle die richtige Formulierung</div>';
+  for(var pi=0;pi<gm.p.length;pi++){
+    var p=gm.p[pi];
+    h+='<div style="margin-bottom:13px;padding-bottom:11px;border-bottom:1px solid var(--bd)">'
+      +'<div class="qn">'+p.l+'</div><div class="qt">'+p.pr+'</div>';
+    for(var oi=0;oi<p.o.length;oi++) h+='<button type="button" class="btn" id="em'+pi+'_'+oi+'" onclick="pEm('+pi+','+oi+')">'+p.o[oi]+'</button>';
+    h+='<div class="fb" id="efb'+pi+'"></div></div>';
+  }
+  return h+'</div>';
+}
+function pEm(pi,oi){
+  var p=G[CUR].p[pi];EA[pi]=oi;var ok=oi===p.c;
+  for(var i=0;i<p.o.length;i++){
+    var b=document.getElementById('em'+pi+'_'+i);if(!b)continue;
+    b.disabled=true;b.className='btn';
+    if(i===oi&&ok)b.className='btn ok';
+    else if(i===oi)b.className='btn er';
+    else if(i===p.c)b.className='btn sh';
+  }
+  var f=document.getElementById('efb'+pi);if(!f)return;
+  f.className='fb on '+(ok?'ok':'er');
+  f.textContent=(ok?'✅ Richtig! ':'❌ Nicht ganz. ')+p.e;
+  uLE();
+}
+function sEm(){var gm=G[CUR],c=0;for(var i=0;i<gm.p.length;i++){if(EA[i]===gm.p[i].c)c++;}return c===3?3:c===2?2:c===1?1:0;}
+
+// ── LIVE EGGS ─────────────────────────────────────────────
+function uLE(){
+  var gm=G[CUR],sc=0;
+  if(gm.type==='mc')sc=sMC();
+  else if(gm.type==='fill')sc=sFill();
+  else if(gm.type==='match')sc=sMatch();
+  else if(gm.type==='ns')sc=sNS();
+  else if(gm.type==='scr')sc=sScr();
+  else if(gm.type==='em')sc=sEm();
+  var row=document.getElementById('le');if(!row)return;
+  var sp=row.getElementsByTagName('span');
+  for(var i=0;i<sp.length;i++) sp[i].className=i<sc?'em on':'em';
+}
+
+// ── SUBMIT ────────────────────────────────────────────────
+function doSubmit(){
+  var gm=G[CUR],sc=0;
+  if(gm.type==='mc')sc=sMC();
+  else if(gm.type==='fill')sc=sFill();
+  else if(gm.type==='match')sc=sMatch();
+  else if(gm.type==='ns')sc=sNS();
+  else if(gm.type==='scr')sc=sScr();
+  else if(gm.type==='em')sc=sEm();
+  SC[CUR]=sc;updE();
+  var msgs=['Schade – nächstes Mal klappt es besser! 💪','Gut gemacht! 🌱','Prima – fast perfekt! 🌸','Ausgezeichnet – perfekte Punktzahl! 🏆'];
+  var er='';for(var i=0;i<3;i++) er+='<span class="em" style="font-size:26px;opacity:'+(i<sc?1:.15)+'">🥚</span>';
+  var gc=document.getElementById('gc');if(!gc)return;
+  gc.innerHTML='<div style="text-align:center;padding:20px 10px">'
+    +'<div class="em" style="font-size:48px;margin-bottom:10px">'+(sc===3?'🎉':sc===2?'🌸':sc===1?'🌱':'🐣')+'</div>'
+    +'<h2 style="font-weight:800;font-size:19px">'+msgs[sc]+'</h2>'
+    +'<div style="margin:14px 0;display:flex;justify-content:center;gap:4px">'+er+'</div>'
+    +'<div style="font-size:14px;color:var(--mu)">Du hast <b>'+sc+' von 3 Eiern</b> gesammelt.</div>'
+    +'<div style="font-size:13px;color:var(--mu);margin-top:3px">Gesamt: '+tot()+' / 18 🥚</div>'
+    +'</div>'
+    +'<div class="nbrow" style="justify-content:center">'
+    +'<a href="#overview" class="nb y" style="font-size:15px">← Zurück zur Übersicht</a>'
+    +'</div>';
+}
+
+// ── RESULT ────────────────────────────────────────────────
+function addPlayer(){
+  PCT++;
+  var list=document.getElementById('plist');if(!list)return;
+  var d=document.createElement('div');d.className='ri';
+  d.innerHTML='<input type="text" class="ti" style="flex:1" placeholder="Name..." id="pn'+PCT+'">'
+    +'<input type="number" class="ti" style="width:65px;text-align:center" min="0" max="18" placeholder="0-18" id="ps'+PCT+'">'
+    +'<span class="em" style="font-size:16px">🥚</span>';
+  list.appendChild(d);
+  // refocus to keep hash from scrolling
+  if(window.history&&window.history.pushState) window.history.pushState(null,null,'#result');
+}
+function calcResults(){
+  var pl=[];
+  for(var i=1;i<=PCT;i++){
+    var n=document.getElementById('pn'+i),s=document.getElementById('ps'+i);
+    if(n&&n.value.trim()) pl.push({name:n.value.trim(),score:parseInt(s&&s.value)||0});
+  }
+  if(pl.length<2){alert('Bitte mindestens 2 Schüler/innen eintragen!');return;}
+  pl.sort(function(a,b){return b.score-a.score;});
+  var pa=document.getElementById('podarea');if(pa)pa.style.display='block';
+  var ord=pl.length>=3?[pl[1],pl[0],pl[2]]:[null,pl[0],pl[1]];
+  var cls=['p2','p1','p3'],med=['🥈','🥇','🥉'],ph='';
+  for(var i=0;i<ord.length;i++){
+    var p=ord[i];
+    ph+=p?'<div class="pp '+cls[i]+'"><div class="pr em">'+med[i]+'</div>'
+      +'<div style="font-weight:800;font-size:12px">'+p.name+'</div>'
+      +'<div class="ps">'+p.score+'</div>'
+      +'<div class="pl">Eier 🥚</div></div>'
+      :'<div style="flex:1"></div>';
+  }
+  var pd=document.getElementById('podium');if(pd)pd.innerHTML=ph;
+  var rh='<div class="dv"></div><div class="lb">Alle Platzierungen</div><div style="display:flex;flex-direction:column;gap:5px">';
+  for(var i=0;i<pl.length;i++){
+    var m=i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1)+'.';
+    rh+='<div style="display:flex;align-items:center;gap:9px;background:'+(i<3?'white':'transparent')+';border:'+(i<3?'1px solid var(--bd)':'none')+';border-radius:8px;padding:'+(i<3?'8px 11px':'3px 2px')+';">'
+      +'<span class="em" style="font-size:15px;min-width:26px">'+m+'</span>'
+      +'<span style="font-weight:700;flex:1">'+pl[i].name+'</span>'
+      +'<span style="font-weight:800;color:#C08000">'+pl[i].score+' 🥚</span></div>';
+  }
+  var fr=document.getElementById('ranking');if(fr)fr.innerHTML=rh+'</div>';
+  if(window.history&&window.history.pushState)window.history.pushState(null,null,'#result');
+}
+function renderResult(){
+  var t=tot();
+  var ms=document.getElementById('my-score');if(ms)ms.innerHTML=t+' <span class="em">🥚</span>';
+  var gd=['Viel Übung nötig','Weiter üben!','Gut gemacht!','Sehr gut!','Ausgezeichnet! 🏆'];
+  var mg=document.getElementById('my-grade');if(mg)mg.textContent=gd[t<=3?0:t<=8?1:t<=12?2:t<=16?3:4];
+  var db=document.getElementById('dbreak');if(!db)return;
+  var dh='';
+  for(var i=0;i<G.length;i++){
+    var s=SC[i];
+    dh+='<div style="text-align:center;background:white;border:1px solid var(--bd);border-radius:7px;padding:5px 7px;min-width:42px">'
+      +'<div class="em" style="font-size:15px">'+G[i].ico+'</div>'
+      +'<div style="font-size:10px;font-weight:700;color:'+(s===null?'var(--mu)':'#C08000')+'">'+(s===null?'–':s+' 🥚')+'</div></div>';
+  }
+  db.innerHTML=dh;
+  if(!PCT){addPlayer();addPlayer();addPlayer();}
+}
+function doReset(){
+  SC=[null,null,null,null,null,null];PCT=0;MCT=0;MSEL=null;
+  var pl=document.getElementById('plist');if(pl)pl.innerHTML='';
+  var pa=document.getElementById('podarea');if(pa)pa.style.display='none';
+  updE();
+  document.querySelectorAll('.sc').forEach(function(s){s.className='sc';});
+  var ov=document.getElementById('sc-overview');if(ov)ov.className='sc on';
+  if(window.history&&window.history.pushState)window.history.pushState(null,null,'#overview');
+  renderOV();
+}
+
+// ── INIT ──────────────────────────────────────────────────
+renderOV();
+updE();
+</script>
+</body>
+</html>
